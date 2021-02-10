@@ -8,29 +8,64 @@ def problem_1():
 
 
 def p_1_a():
-    # fig, ax = plt.subplots()
-    #
-    # t_start = 0.0
-    # t_step_size = 0.001
-    # t_end = 1.0
-    # t = np.arange(t_start, t_end, t_step_size)
-    #
-    # r = 1.0
-    # K = 10
-    # A = 5
-    #
-    # N_0 = 50
-    # N_delay_0 = 40
-    #
-    #
-    # N = N_0
-    # N_delay = N_delay_0
-    #
-    # def N_dot(t):
-    #     for i in range(len(t)):
-    #         r*N * (1 - N_delay/K) * (N/A - 1)
-    #
-    # l, = plt.plot(t, N_dot, lw=2)
+    # ==================================================================================================================
+    #    Define parameters
+    # ==================================================================================================================
+
+    # Time parameter
+    t_start = 0.0
+    t_step_size = 0.01
+    t_end = 100.0
+    t_array = np.arange(t_start, t_end, t_step_size)
+    n_t = len(t_array)
+
+    # Delayed time parameter
+    T_start = 0.1
+    T_step_size = 0.1
+    T_end = 5.0
+    T_array = np.arange(T_start, T_end, T_step_size)
+    n_T = len(T_array)
+
+    # Growth rate
+    r = 0.1
+
+    # Carrying capacity
+    K = 100
+
+    # Allee effect
+    A = 20
+
+    # Initial condition at t=0
+    N_0 = 50
+
+    # Assume N(t) = N_0 for [-T, 0] =>
+    N_delay_0 = N_0
+
+    # ==================================================================================================================
+    #    Calculate values for N_dot for all T in T_array, for t in t_array
+    # ==================================================================================================================
+    # Initialize N_dot, N and N_delay to initial conditions
+    N_dot = np.zeros([n_T, n_t])
+    N = np.zeros([n_T, n_t])
+    N[:, 0] = N_0
+
+    for i_T in range(n_T):
+        N_delay = N_0
+        for i_t in range(n_t - 1):
+            if t_array[i_t] - T_array[i_T] > 0.0:
+                i_delay = int(T_array[i_T] / t_step_size)
+                N_delay = N[i_T, i_t - i_delay]
+            N_dot[i_T, i_t + 1] = r*N[i_T, i_t] * (1 - N_delay/K) * (N[i_T, i_t]/A - 1)
+            N[i_T, i_t + 1] = N[i_T, i_t] + t_step_size*N_dot[i_T, i_t + 1]
+
+    # Plot N as a function of t for all T
+    fig, ax = plt.subplots()
+
+    for i_T in range(n_T):
+        plt.plot(t_array, N[i_T, :])
+        # plt.show()
+
+    # l, = plt.plot(t_array, N_dot, lw=2)
 
     # axcolor = 'lightgoldenrodyellow'
     # axfreq = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
