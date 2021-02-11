@@ -5,7 +5,7 @@ from matplotlib.widgets import Slider, Button, RadioButtons
 
 def problem_1():
     # p_1_a()
-    p_1_c()
+    p_1_b()
 
 
 def p_1_a():
@@ -15,15 +15,15 @@ def p_1_a():
 
     # Time parameter
     t_start = 0.0
-    t_step_size = 0.001
+    t_step_size = 0.01
     t_end = 100.0
     t_array = np.arange(t_start, t_end, t_step_size)
     n_t = len(t_array)
 
     # Delayed time parameter
-    T_start = 1.0
+    T_start = 0.1
     T_step_size = 0.1
-    T_end = 2.0
+    T_end = 5.3
     T_array = np.arange(T_start, T_end, T_step_size)
     n_T = len(T_array)
 
@@ -62,14 +62,18 @@ def p_1_a():
     # Plot N as a function of t for all T
     fig, ax = plt.subplots()
 
+    plt.xlabel(r'$t$ [time]')
+    plt.ylabel(r'$N(t)$ [population]')
     for i_T in range(n_T):
+        plt.clf()
+        plt.title(r'$N(t)$, $T=' + str(T_array[i_T] )+ r'$')
+        plt.xlabel(r'$t$ [time]')
+        plt.ylabel(r'$N(t)$ [population]')
         plt.plot(t_array, N[i_T, :])
         plt.show()
 
-    plt.show()
 
-
-def p_1_c():
+def p_1_b():
     # ==================================================================================================================
     #    Define parameters
     # ==================================================================================================================
@@ -83,8 +87,8 @@ def p_1_c():
 
     # Time delayed  parameter
     T_start = 0.1
-    T_step_size = 0.1
-    T_end = 5.0
+    T_step_size = 0.001
+    T_end = 6.0
     T_array = np.arange(T_start, T_end, T_step_size)
     n_T = len(T_array)
 
@@ -122,20 +126,29 @@ def p_1_c():
     T = T_array[0]
     N_dot, N = get_population(T)
 
+    # Plots
     fig = plt.figure()
 
-    ax_N = plt.axes([0.1, 0.2, 0.8, 0.65])
+    # Phase space
+    ax_phase_space = plt.subplot(2, 2, 1)
+    line_phase_space, = plt.plot(N, N_dot)
+    line_fixed_point, = plt.plot([N.min(), N.max()], [0, 0])
 
-    N_plot, = plt.plot(N, N_dot)
-    fixed_point_line_plot, = plt.plot([N.min(), N.max()], [0, 0])
-
-    plt.title(r'$\dot{N}$ vs $N$')
+    plt.title(r'Phase space')
     plt.xlabel(r'$N$')
     plt.ylabel(r'$\dot{N}$')
 
-    slider_ax = plt.axes([0.1, 0.05, 0.8, 0.05])
+    # Solution space
+    ax_solution_space = plt.subplot(2, 2, 2)
+    line_solution_space, = plt.plot(t_array, N)
+
+    plt.title(r'Solution space')
+    plt.xlabel(r'$t$ [time]')
+    plt.ylabel(r'$N(t)$ [population]')
+
+    ax_slider = plt.axes([0.1, 0.05, 0.8, 0.05])
     # here we create the slider
-    a_slider = Slider(slider_ax,  # the axes object containing the slider
+    a_slider = Slider(ax_slider,  # the axes object containing the slider
                       'T',  # the name of the slider parameter
                       T_array[0],  # minimal value of the parameter
                       T_array[-1],  # maximal value of the parameter
@@ -144,55 +157,28 @@ def p_1_c():
 
     def update(T):
         N_dot, N = get_population(T)
-        N_plot.set_xdata(N)
-        N_plot.set_ydata(N_dot)
-        fixed_point_line_plot.set_xdata([N.min(), N.max()])
-        fixed_point_line_plot.set_ydata([0, 0])
-        ax_N.axis((N.min(), N.max()*1.05, N_dot.min(), N_dot.max()))
-        fig.canvas.draw_idle()  # redraw the plot
 
+        # Phase space
+        line_phase_space.set_xdata(N)
+        line_phase_space.set_ydata(N_dot)
+        line_fixed_point.set_xdata([N.min(), N.max()])
+        line_fixed_point.set_ydata([0, 0])
+        ax_phase_space.axis((N.min(), N.max()*1.05, N_dot.min(), N_dot.max()*1.05))
 
+        # Solution space
+        line_solution_space.set_xdata(t_array)
+        line_solution_space.set_ydata(N)
+        ax_solution_space.axis((t_array.min(), t_array.max(), N.min(), N.max() * 1.05))
 
+        # redraw the plot
+        fig.canvas.draw_idle()
 
     a_slider.on_changed(update)
     plt.show()
 
-    # sin_ax = plt.axes([0.1, 0.2, 0.8, 0.65])
-    # slider_ax = plt.axes([0.1, 0.05, 0.8, 0.05])
-    #
-    # # here we create the slider
-    # a_slider = Slider(slider_ax,  # the axes object containing the slider
-    #                   'a',  # the name of the slider parameter
-    #                   T_array[0],  # minimal value of the parameter
-    #                   T_array[-1],  # maximal value of the parameter
-    #                   valinit=T_array[0]  # initial value of the parameter
-    #                   )
-    #
-    # # Next we define a function that will be executed each time the value
-    # # indicated by the slider changes. The variable of this function will
-    # # be assigned the value of the slider.
-    # def update(a):
-    #
-    #     sin_plot.set_ydata(N)  # set new y-coordinates of the plotted points
-    #     fig.canvas.draw_idle()  # redraw the plot
-    #
-    # # the final step is to specify that the slider needs to
-    # # execute the above function when its value changes
-    # a_slider.on_changed(update)
-
-    plt.show()
-
 
 def main():
-    print('=' * 80)
-    print('\tProblem Set 1')
-    print('=' * 80)
-
     problem_1()
-
-    print('=' * 80)
-    print('\tEnd of program')
-    print('=' * 80)
 
 
 if __name__ == "__main__":
