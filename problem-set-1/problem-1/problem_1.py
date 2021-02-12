@@ -3,11 +3,6 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons
 
 
-def problem_1():
-    # p_1_a()
-    p_1_b()
-
-
 def p_1_a():
     # ==================================================================================================================
     #    Define parameters
@@ -23,7 +18,7 @@ def p_1_a():
     # Delayed time parameter
     T_start = 0.1
     T_step_size = 0.1
-    T_end = 5.3
+    T_end = 5.0
     T_array = np.arange(T_start, T_end, T_step_size)
     n_T = len(T_array)
 
@@ -65,12 +60,17 @@ def p_1_a():
     plt.xlabel(r'$t$ [time]')
     plt.ylabel(r'$N(t)$ [population]')
     for i_T in range(n_T):
-        plt.clf()
+        # plt.clf()
         plt.title(r'$N(t)$, $T=' + str(T_array[i_T] )+ r'$')
         plt.xlabel(r'$t$ [time]')
         plt.ylabel(r'$N(t)$ [population]')
         plt.plot(t_array, N[i_T, :])
-        plt.show()
+    # plt.show()
+
+    # Bifurcation diagram
+    fig_bifurcatio, ax_bifurcation = plt.subplots()
+    plt.plot(T_array, N[:, 9000:])
+    print('h')
 
 
 def p_1_b():
@@ -175,6 +175,11 @@ def p_1_b():
 
     a_slider.on_changed(update)
     plt.show()
+
+
+def problem_1():
+    # p_1_a()
+    p_1_b()
 
 
 def main():
